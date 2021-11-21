@@ -26,14 +26,16 @@ class LoanController extends Controller
             'interest_rate' => 'required|gt:0',
             'disbursement_date' => 'required|date',
         ]);
-        $loan = $this->loanService->registerLoan($request->user(),$request);
+        if(Carbon::createFromTimeString($request->disbursement_date) < now()) return response()->json(["message" => "invalid Disbursement date"],400);
+        $loan = $this->loanService->registerLoan($request->user(),$request->total,$request->loan_term,$request->collect_day,$request->interest_rate,$request->disbursement_date);
         $this->loanService->generateRepaymentSchedule($loan);
         $loan->repaymentSchedules = $loan->repaymentSchedules()->get();
         return response()->json($loan);
     }
 
     public function approveLoan(Request $request,Loan $loan){
-
+        //@TODO thinking about process for disbursement_date
+        if($loan->disbursement_date < now()) return response()->json(["message" => "invalid loan"],400);
         $this->loanService->approve($request->user(),$loan);
         return response()->json(["message" => "Success"]);
     }

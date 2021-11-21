@@ -10,16 +10,16 @@ use Carbon\Carbon;
 
 class LoanService{
 
-    public function registerLoan(User $user,$payload): Loan
+    public function registerLoan(User $user,$total,$loan_term,$collect_day,$interest_rate,$disbursement_date): Loan
     {
         //@TODO register Loan Process
         //@TODO Add more type of Loan : weekly,monthly,yearly ,
         $loan = new Loan();
-        $loan->total = $payload->total;
-        $loan->loan_term = $payload->loan_term;
-        $loan->collect_day = $payload->collect_day;
-        $loan->interest_rate = $payload->interest_rate;
-        $loan->disbursement_date = Carbon::createFromTimeString($payload->disbursement_date);
+        $loan->total = $total;
+        $loan->loan_term = $loan_term;
+        $loan->collect_day = $collect_day;
+        $loan->interest_rate = $interest_rate;
+        $loan->disbursement_date = Carbon::createFromTimeString($disbursement_date);
         $user->loans()->save($loan);
         return $loan;
     }
